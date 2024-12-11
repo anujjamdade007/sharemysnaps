@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ====== Forms Section Start -->
+<section class="bg-gray-1 py-20 lg:py-[120px]">
+   <div class="container mx-auto px-4">
+      <div class="flex flex-wrap mx-5 ">
+         <div class="w-full p-8">
+            <div class="relative mx-auto max-w-[525px] overflow-hidden rounded-lg bg-white py-16 px-10 text-center sm:px-12 md:px-[60px]">
+               <div class="mb-10 text-center md:mb-16">
+                  <p class="text-2xl font-bold">Sign In</p>
+               </div>
+               <form method="POST">
+                  {% csrf_token %}
+                  <div class="mb-6 text-left">
+                     <!-- Username Label and Input -->
+                     <label for="username" class="block text-sm font-medium text-body-color">Username</label>
+                     <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Enter your username"
+                        class="w-full px-5 py-3 text-base bg-transparent border rounded-md outline-none border-stroke text-body-color focus:border-primary focus-visible:shadow-none"
+                        value="{{ form.username.value|default:'' }}" />
+                  </div>
+                  <div class="mb-6 text-left">
+                     <!-- Password Label and Input -->
+                     <label for="password" class="block text-sm font-medium text-body-color">Password</label>
+                     <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        class="w-full px-5 py-3 text-base bg-transparent border rounded-md outline-none border-stroke text-body-color focus:border-primary focus-visible:shadow-none"
+                        value="{{ form.password.value|default:'' }}" />
+                  </div>
+                  <div class="mb-10">
+                     <!-- Submit Button -->
+                     <input
+                        type="submit"
+                        value="Sign In"
+                        class="w-full px-5 py-3 text-base font-medium text-white transition border rounded-md cursor-pointer border-primary bg-primary hover:bg-opacity-90" />
+                  </div>
+               </form>
+               <p class="text-base text-body-color">Don't have an account? <a href="{% url 'signup' %}" class="text-primary">Sign Up</a></p>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+
+<!-- ====== Forms Section End -->
+
+ 
+{% endblock %}
+
+
+
