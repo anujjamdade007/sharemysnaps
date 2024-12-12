@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.4/dist/forms.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/flowbite@1.5.0/dist/flowbite.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/material-tailwind@2.0.0-beta/dist/material-tailwind.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
 
 <!-- Navbar -->
-
 <nav class="bg-blue-600 border-gray-200 dark:bg-blue-800 relative">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -33,11 +30,50 @@
               Logout
           </button>
         </form>
+        
     </div>
 </nav>
 
 
+<div id="sticky-banner" class="fixed top-20 flex justify-center w-full">
+
+  {% for message in messages %}
+  {% if message.tags == 'success' %}
   
+    <div id="alert-1" class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+      <div class="ms-3 text-sm font-medium">
+        {{ message }}
+      </div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
+          <span class="sr-only">Close</span>
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+          </svg>
+      </button>
+    </div>
+
+  {% elif message.tags == 'error'  %}
+
+    <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+      <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+      </svg>
+      <span class="sr-only">Info</span>
+      <div class="ms-3 text-sm font-medium">
+      {{ message }}
+      </div>
+      <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-2" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+      </button>
+    </div>
+
+  {% endif %}
+  {% endfor %}
+
+</div>
 
 <!-- Main Dashboard -->
 <div class="container mx-auto px-6 py-8">
@@ -91,29 +127,32 @@
     <!-- Right Side (larger) -->
     <div class="w-full lg:w-3/4">
 
-      <!-- Create New Album/Event Section (smaller) -->
+      <!-- Create New Album/Event Section -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-6">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Album/Event</h3>
         <div class="flex flex-col lg:flex-row lg:space-x-4">
-          <!-- Smaller Input Field for Album/Event Name -->
-          <input type="text" class="form-input w-full lg:w-2/3 p-2 border border-gray-300 rounded-lg text-sm" placeholder="Album/Event Name" id="album-name" name="album-name">
-          
-          <!-- Button to Redirect to New Page (for Album Creation) -->
-          <a href="create-album.html" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mt-4 lg:mt-0 text-center text-sm">
+          <!-- Button to Trigger Popup Form -->
+          <button 
+            id="createAlbumBtn" 
+            class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mt-4 lg:mt-0 text-center text-sm">
             Create Album
+          </button>
+          <a href="{% url 'sync_folder' %}">
+            <button 
+            id="createAlbumBtn" 
+            class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mt-4 lg:mt-0 text-center text-sm">
+            Sync Now
+          </button>
           </a>
         </div>
       </div>
 
-      <!-- Search Bar for Albums (smaller) -->
+      <!-- Search Bar for Albums -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-6">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Search for Albums/Events</h3>
-        <!-- Simple Form for Search (smaller) -->
         <form action="/search" method="POST">
           <div class="flex items-center">
             <input type="text" name="search-query" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Search for an Album/Event">
-            
-            <!-- Submit Button for Search (smaller) -->
             <button type="submit" class="bg-blue-600 text-white py-2 px-4 ml-4 rounded-lg hover:bg-blue-700 text-sm">
               Search
             </button>
@@ -122,25 +161,23 @@
       </div>
 
       <!-- All Events Cards Section -->
+      {% for folder in folders %}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Example of an Attractive Album Card -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <div class="space-y-2">
             <div class="flex items-center space-x-2">
-              <span class="text-sm font-semibold text-gray-800">Event: Wedding</span>
+              <span class="text-sm font-semibold text-gray-800">Event: {{ folder.event_name }}</span>
               <button class="text-gray-500 hover:text-gray-700 p-1 rounded-full">
                 <span class="material-icons text-xs">edit</span>
               </button>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-xs text-gray-500">Folder: Wedding_2024</span>
+              <span class="text-xs text-gray-500">Folder: {{ folder.folder_name }}</span>
               <button class="text-gray-500 hover:text-gray-700 p-1 rounded-full">
                 <span class="material-icons text-xs">edit</span>
               </button>
             </div>
           </div>
-
-          <!-- Action Buttons -->
           <div class="mt-6 space-y-2">
             <button class="w-full bg-blue-600 text-white py-1 px-3 rounded-lg hover:bg-blue-700 text-sm transition duration-200">Upload</button>
             <button class="w-full bg-green-600 text-white py-1 px-3 rounded-lg hover:bg-green-700 text-sm transition duration-200">View/Delete</button>
@@ -148,21 +185,73 @@
             <button class="w-full bg-gray-600 text-white py-1 px-3 rounded-lg hover:bg-gray-700 text-sm transition duration-200">View Gallery</button>
           </div>
         </div>
-
-        <!-- Repeat similar album card for other albums -->
-
       </div>
+      {% empty %}
+        <tr>
+          <td colspan="3">You don't have any folders created yet.</td>
+        </tr>
+      {% endfor %}
 
     </div>
   </div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-gray-800 text-white py-4 mt-8">
-  <div class="container mx-auto text-center">
-    <p>&copy; 2024 MyApp. All rights reserved.</p>
+<!-- Popup Modal Form -->
+<div id="createAlbumModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden justify-center items-center">
+  <div class="bg-white p-6 rounded-lg shadow-md w-96">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Album/Event</h3>
+    
+    <!-- Modal Form -->
+    <form method="POST" action="{% url 'create_folder' %}">
+      {% csrf_token %}
+      <div class="mb-4">
+        <label for="event_name" class="block text-gray-700">Event Name</label>
+        <input type="text" name="event_name" id="event_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter event name" required>
+      </div>
+      <div class="mb-4">
+        <label for="folder_name" class="block text-gray-700">Folder Name</label>
+        <input type="text" name="folder_name" id="folder_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter folder name" required>
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button type="button" id="closeModalBtn" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 text-sm">
+          Cancel
+        </button>
+        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm">
+          Create Folder
+        </button>
+      </div>
+    </form>
   </div>
-</footer>
+</div>
+
+<!-- JavaScript to handle modal -->
+<script>
+  // Get the modal and buttons
+  const createAlbumBtn = document.getElementById('createAlbumBtn');
+  const createAlbumModal = document.getElementById('createAlbumModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  // Open the modal when the "Create Album" button is clicked
+  createAlbumBtn.addEventListener('click', () => {
+    createAlbumModal.classList.remove('hidden');
+  });
+
+  // Close the modal when the "Cancel" button is clicked
+  closeModalBtn.addEventListener('click', () => {
+    createAlbumModal.classList.add('hidden');
+  });
+
+  // Close the modal when clicking outside the modal (on the overlay)
+  createAlbumModal.addEventListener('click', (e) => {
+    if (e.target === createAlbumModal) {
+      createAlbumModal.classList.add('hidden');
+    }
+  });
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
 
 </body>
 </html>

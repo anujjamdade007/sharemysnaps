@@ -170,3 +170,11 @@ LOGOUT_REDIRECT_URL = 'login'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '509717596435-2jd2o9rmrud095b323ebb4bfrd3uqf21.apps.googleusercontent.com'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/drive',  # Full access to Google Drive
+    'openid',                               # OpenID Connect scope
+    'profile',                              # Basic profile info
+    'email',                                # Access to the user's email
+]
+
