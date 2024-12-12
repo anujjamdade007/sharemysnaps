@@ -27,9 +27,12 @@
             </svg>
         </button>
         <!-- Logout Button in top right corner -->
-        <a href="#" class="absolute top-4 right-4 py-2 px-3 text-white bg-blue-700 rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-500">
-            Logout
-        </a>
+        <form action="{% url 'logout' %}" method="POST" class="absolute top-4 right-4">
+          {% csrf_token %}
+          <button type="submit" class="py-2 px-3 text-white bg-blue-700 rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-500">
+              Logout
+          </button>
+        </form>
     </div>
 </nav>
 
@@ -43,20 +46,12 @@
   <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">User Information</h2>
     <div class="space-y-2">
-      <p class="text-sm text-gray-600"><strong>Username:</strong> johndoe</p>
-      <p class="text-sm text-gray-600"><strong>Email:</strong> johndoe@example.com</p>
+      <p class="text-sm text-gray-600"><strong>Username:</strong> {{user.username}}</p>
+      <p class="text-sm text-gray-600"><strong>Email:</strong> {{user.email}}</p>
       <div class="flex justify-between items-center">
         <a href="#" class="text-sm text-blue-600 hover:text-blue-700">Change Password</a>
       </div>
     </div>
-  </div>
-
-  <!-- Connect Google Account -->
-  <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Connect Google Account</h2>
-    <button class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700">
-      Connect to Google Drive
-    </button>
   </div>
 
   <!-- Two Part Page Layout: Left Side & Right Side -->
