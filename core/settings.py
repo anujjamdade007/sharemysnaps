@@ -173,8 +173,5 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/drive',  # Full access to Google Drive
-    'openid',                               # OpenID Connect scope
-    'profile',                              # Basic profile info
-    'email',                                # Access to the user's email
 ]
 

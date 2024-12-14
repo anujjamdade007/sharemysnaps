@@ -179,7 +179,11 @@
             </div>
           </div>
           <div class="mt-6 space-y-2">
-            <button class="w-full bg-blue-600 text-white py-1 px-3 rounded-lg hover:bg-blue-700 text-sm transition duration-200">Upload</button>
+            <a href="{% url 'upload_image_to_folder' folder_id=folder.folder_id %}">
+              <button class="w-full bg-blue-600 text-white py-1 px-3 rounded-lg hover:bg-blue-700 text-sm transition duration-200">
+                  Upload
+              </button>
+          </a>
             <button class="w-full bg-green-600 text-white py-1 px-3 rounded-lg hover:bg-green-700 text-sm transition duration-200">View/Delete</button>
             <button class="w-full bg-indigo-600 text-white py-1 px-3 rounded-lg hover:bg-indigo-700 text-sm transition duration-200">Download QR</button>
             <button class="w-full bg-gray-600 text-white py-1 px-3 rounded-lg hover:bg-gray-700 text-sm transition duration-200">View Gallery</button>
