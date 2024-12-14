@@ -26,7 +26,7 @@ def index(request):
 # login page
 def login(request):
     
-    if request.user.is_authenticated:
-        return redirect('dashboard')
+    # if request.user.is_authenticated:
+    #     return redirect('dashboard')
     
     return render(request, 'login.html')
