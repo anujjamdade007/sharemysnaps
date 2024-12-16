@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,6 +50,7 @@ INSTALLED_APPS = [
 
     # third party apps
     'social_django',
+    'django.contrib.humanize',
 
 ]
 
@@ -167,11 +174,12 @@ LOGOUT_URL = 'logout'
 
 LOGOUT_REDIRECT_URL = 'login'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '509717596435-2jd2o9rmrud095b323ebb4bfrd3uqf21.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/drive',  # Full access to Google Drive
 ]
 
+API_KEY = 'AIzaSyApyMGFlJHIfBn92QGPxd-utYu4mEyT-0I'

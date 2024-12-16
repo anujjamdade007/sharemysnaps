@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .download-btn {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+  <h1>Image Gallery</h1>
+  <div class="gallery">
+      {% if image_ids %}
+          {% for image_ids in image_ids %}
+              <div class="image-item">
+                  <img src="{% url 'serve_image' image_ids=image_ids %}" alt="Image" style="max-width: 100%; height: auto;">
+              </div>
+          {% endfor %}
+      {% else %}
+          <p>No images found in the gallery.</p>
+      {% endif %}
+  </div>
+    
+</body>
+</html>
