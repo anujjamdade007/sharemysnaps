@@ -5,7 +5,10 @@ from social_django.models import UserSocialAuth
 import requests
 from social_django.utils import load_strategy
 from django.contrib import messages
-
+import os
+from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
  
 
 @login_required
@@ -15,12 +18,43 @@ def dashboard(request):
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
     except Exception as e:
-        messages.error(request, f"Session Time Out Please Login Again")
+        messages.error(request, "Session Time Out. Please Login Again.")
         return redirect('login')
+
+    # Get Google Drive storage usage
+    storage_url = "https://www.googleapis.com/drive/v3/about?fields=storageQuota"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+    }
+    response = requests.get(storage_url, headers=headers)
+
+    if response.status_code == 200:
+        # Parse the storage quota information
+        storage_data = response.json()
+        total_storage = int(storage_data['storageQuota']['limit'])  # Total storage in bytes
+        used_storage = int(storage_data['storageQuota']['usage'])  # Used storage in bytes
+
+        # Convert bytes to GB (with more precision, avoid premature rounding)
+        total_storage_gb = total_storage / (1024 ** 3)  # GB
+        used_storage_gb = used_storage / (1024 ** 3)  # GB
+
+        # Calculate the percentage of used storage
+        storage_percentage = (used_storage / total_storage) * 100
+        storage_percentage = round(storage_percentage, 2)
+
+    else:
+        # Handle error fetching storage information
+        storage_percentage = None
+        messages.error(request, "Failed to retrieve Google Drive storage information.")
+
     folders = GoogleDriveFolder.objects.filter(user=request.user)
-    return render(request , 'dashboard.html', {'folders': folders})
 
-
+    return render(request, 'dashboard.html', {
+        'folders': folders,
+        'storage_percentage': storage_percentage,
+        'used_storage_gb': round(used_storage_gb, 2),
+        'total_storage_gb': round(total_storage_gb, 2)
+    })
 
 @login_required
 def create_folder(request):
@@ -33,7 +67,7 @@ def create_folder(request):
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
     except Exception as e:
-        messages.error(request, f"Session Time Out Please Login Again")
+        messages.error(request, f"Session Time Out. Please Login Again.")
         return redirect('login')
 
     if not access_token:
@@ -71,17 +105,32 @@ def create_folder(request):
         folder_id = folder_data.get('id')
         folder_name = folder_data.get('name')
 
-        # Save folder details to your backend (database)
-        GoogleDriveFolder.objects.create(
-            user=request.user,
-            folder_name=folder_name,
-            folder_id=folder_id,
-            event_name=event_name
-        )
+        # Now, update the permissions to make it publicly viewable
+        permission_url = f"https://www.googleapis.com/drive/v3/files/{folder_id}/permissions"
+        permission_data = {
+            "role": "reader",  # 'reader' means view-only access
+            "type": "anyone",  # Make the folder accessible to anyone
+            "withLink": True   # Anyone with the link can view the folder
+        }
 
-        # Show success message to the user
-        messages.success(request, f"Folder '{folder_name}' created successfully.")
-        return redirect('dashboard')  # Redirect to the dashboard
+        # Send POST request to set the permission
+        permission_response = requests.post(permission_url, headers=headers, json=permission_data)
+
+        if permission_response.status_code == 200:
+            # Save folder details to your backend (database)
+            GoogleDriveFolder.objects.create(
+                user=request.user,
+                folder_name=folder_name,
+                folder_id=folder_id,
+                event_name=event_name
+            )
+
+            # Show success message to the user
+            messages.success(request, f"Folder '{folder_name}' created successfully and is now publicly viewable.")
+            return redirect('dashboard')  # Redirect to the dashboard
+        else:
+            messages.error(request, f"Failed to set public access for the folder. Error: {permission_response.text}")
+            return render(request, 'error.html', {'message': 'Failed to set public access for the folder.'})
 
     else:
         # Handle the error response from the Google API
@@ -101,6 +150,7 @@ def sync_folders(request):
         # Retrieve the user's Google OAuth2 social authentication info
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
+        # print("access token: ", access_token)
     except Exception as e:
         messages.error(request, f"Session Time Out Please Login Again")
         return redirect('login')
@@ -133,11 +183,8 @@ def sync_folders(request):
         else:
             messages.error(request, f"Failed to sync folder '{folder.folder_name}': {response.status_code}")
 
-    # Redirect to dashboard with messages
-    if sync_success:
-        messages.success(request, "Folders synchronized successfully!")
-    else:
-        messages.warning(request, "No changes detected or sync failed.")
+    
+    messages.success(request, "Folders synchronized successfully!")
 
     return redirect('dashboard')
 
@@ -286,4 +333,135 @@ def upload_file_in_chunks(resumable_session_url, image_file):
             # Handle errors
             print(f"Error occurred: {response.status_code} - {response.text}")
             break
+
+
+
+@login_required
+def redirect_to_folder(request, folder_id):
+    try:
+        # Retrieve the user's Google OAuth2 social authentication info
+        social_user = request.user.social_auth.get(provider='google-oauth2')
+        access_token = social_user.get_access_token(load_strategy())
+    except Exception as e:
+        messages.error(request, "Session timed out. Please log in again.")
+        return redirect('login')
+
+    if not access_token:
+        messages.error(request, "No access token found. Please re-authenticate with Google.")
+        return redirect('login')
+
+    # Construct the URL to the Google Drive folder
+    drive_folder_url = f"https://drive.google.com/drive/folders/{folder_id}"
+
+    # Redirect the user to the folder in Google Drive
+    return redirect(drive_folder_url)
+
+
+import requests
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Add your Google API key here
+
+# def gallery(request, folder_id):
+#     # Public API call to fetch files from the folder using the API key
+#     url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}' in parents&fields=files(id,name,mimeType)&key={API_KEY}"
+#     response = requests.get(url)
+
+#     if response.status_code == 200:
+#         files_data = response.json().get('files', [])
+#         # Filter for image files
+#         images = [
+#             {'id': file['id'], 'name': file['name'], 'mimeType': file['mimeType']}
+#             for file in files_data if file['mimeType'].startswith('image/')
+#         ]
+#     else:
+#         images = []
+
+#     return render(request, 'gallary1.html', {'images': images, 'folder_id': folder_id})
+
+
+# def viewimages(request, file_id):
+#     # Public API call to fetch the image file from Google Drive (no authentication needed)
+#     url = f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media&key={API_KEY}"
+#     response = requests.get(url)
+
+#     # Debugging: print status code and URL to fetch the image
+#     print(f"Fetching image {file_id} from Google Drive. URL: {url}")
+        
+#     if response.status_code == 200:
+#         # Serve the image as a download
+#         return HttpResponse(response.content, content_type='image/jpeg')  # This can be adjusted based on the file type
+#     else:
+#         pass
+
+# f"https://drive.google.com/uc?export=view&id={image_ids}"
+
+import requests
+from urllib.parse import quote_plus
+
+# URL to fetch files from a Google Drive folder (use your own API key here)
+BASE_URL = "https://www.googleapis.com/drive/v3/files"
+
+# Function to fetch image IDs from Google Drive folder
+def fetch_image_ids_from_folder(folder_id, api_key):
+    # URL encode the folder ID for safe query string formatting
+    encoded_folder_id = quote_plus(folder_id)
+
+    # Construct the URL to get all files in the folder, filtering for images
+    url = f"{BASE_URL}?q='{encoded_folder_id}' in parents and mimeType contains 'image/'&key={api_key}"
+
+    # Make the GET request to Google Drive API
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        data = response.json()
+        files = data.get('files', [])
+        
+        # Extract and return the file IDs
+        image_ids = [file['id'] for file in files]
+        print(image_ids)
+        return image_ids
+    else:
+        # If an error occurs, print the error response
+        print(f"Error: {response.status_code} - {response.text}")
+        return []
+
+
+import requests
+from django.http import HttpResponse
+
+def serve_image(request, image_ids):
+    # Build the URL for Google Drive image
+    image_url = f"https://drive.google.com/uc?export=view&id={image_ids}"
+    
+    try:
+        # Public API call to fetch the image file
+        response = requests.get(image_url)
+        
+        if response.status_code == 200:
+            # Serve the image as a download
+            return HttpResponse(response.content, content_type='image/jpeg')  # Adjust based on file type
+        else:
+            # Handle error gracefully, for example, returning a 404 page or error message
+            return HttpResponse("Image not found", status=404)
+    except Exception as e:
+        # Catch any unexpected errors and return an internal server error
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+# View function for the gallery
+
+
+def image_gallery(request, folder_id):
+    # Your public API key for Google Drive
+    api_key =os.getenv('API_KEY') # Replace with your actual API key
+
+    # Fetch image IDs from the folder
+    image_ids = fetch_image_ids_from_folder(folder_id, api_key)
+    print(image_ids)
+    # Render the gallery with the list of image URLs
+    return render(request, 'gallary1.html', {'image_ids': image_ids})
+
+
+
 
