@@ -331,7 +331,7 @@ def upload_file_in_chunks(resumable_session_url, image_file):
             continue
         else:
             # Handle errors
-            print(f"Error occurred: {response.status_code} - {response.text}")
+            # print(f"Error occurred: {response.status_code} - {response.text}")
             break
 
 
@@ -420,34 +420,54 @@ def fetch_image_ids_from_folder(folder_id, api_key):
         
         # Extract and return the file IDs
         image_ids = [file['id'] for file in files]
-        print(image_ids)
+        # print(image_ids)
         return image_ids
     else:
         # If an error occurs, print the error response
-        print(f"Error: {response.status_code} - {response.text}")
+        # print(f"Error: {response.status_code} - {response.text}")
         return []
 
 
 import requests
 from django.http import HttpResponse
 
+import requests
+from django.http import HttpResponse
+import mimetypes
+
 def serve_image(request, image_ids):
     # Build the URL for Google Drive image
     image_url = f"https://drive.google.com/uc?export=view&id={image_ids}"
-    
+
     try:
         # Public API call to fetch the image file
         response = requests.get(image_url)
-        
+
+        # Check if the request was successful
         if response.status_code == 200:
-            # Serve the image as a download
-            return HttpResponse(response.content, content_type='image/jpeg')  # Adjust based on file type
+            # Get the content type from the response headers
+            content_type = response.headers.get('Content-Type', '').split(';')[0]
+            
+            # If the content type is not provided, try to deduce it from the file extension (if possible)
+            if not content_type:
+                file_extension = image_ids.split('.')[-1].lower()
+                content_type, _ = mimetypes.guess_type(f"image.{file_extension}")
+            
+            # If content type still not found, fallback to a generic image type (could be adjusted)
+            if not content_type:
+                content_type = 'application/octet-stream'
+            
+            # Serve the image as a response with the correct content type
+            return HttpResponse(response.content, content_type=content_type)
+
         else:
             # Handle error gracefully, for example, returning a 404 page or error message
             return HttpResponse("Image not found", status=404)
+    
     except Exception as e:
         # Catch any unexpected errors and return an internal server error
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
 
 # View function for the gallery
 
@@ -458,7 +478,7 @@ def image_gallery(request, folder_id):
 
     # Fetch image IDs from the folder
     image_ids = fetch_image_ids_from_folder(folder_id, api_key)
-    print(image_ids)
+    # print(image_ids)
     # Render the gallery with the list of image URLs
     return render(request, 'gallary1.html', {'image_ids': image_ids})
 
