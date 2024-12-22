@@ -1,295 +1,350 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body class="bg-gray-100 font-sans">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ShareMySnaps</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Navbar -->
-<nav class="bg-blue-600 border-gray-200 dark:bg-blue-800 relative">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
-            <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Flowbite</span>
+    <!-- Additional Meta Tags (Optional) -->
+    <meta name="description" content="A simple platform to share and make gallary from your images">
+    <meta name="author" content="Your Name">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+    <style>
+        /* Only keeping necessary custom styles, using Tailwind classes for colors */
+        :root {
+            --header-height: 4rem;
+            --sidebar-width: 240px;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-indigo-50 min-h-screen overflow-x-hidden">
+
+  <!-- Navbar start -->
+  <nav class="bg-white border-gray-200 py-2.5 dark:bg-gray-900">
+    <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
+        <a href="{% url 'home' %}" class="flex items-center">
+          <img src="https://www.svgrepo.com/show/508316/share.svg" class="h-6 mr-3 sm:h-9" alt="Share Logo">
+          <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+            SHARE<span class="ml-0.5 block font-black text-purple-600 xl:inline">MYSNAPS</span>
+        </span>
         </a>
-        <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-            <span class="sr-only">Open main menu</span>
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+        <div class="flex items-center lg:order-2">
+            <div class="hidden mt-2 mr-4 sm:inline-block">
+                <span></span>
+            </div>
+            
+            <form action="{% url 'logout' %}" method="POST" >
+              <!-- {% csrf_token %} -->
+              <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0 dark:bg-purple-600 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-purple-800">
+                  Logout
+              </button>
+            </form>
+        </div>
+    </div>
+  </nav>
+  <!-- Navbar end -->
+
+  <!-- messages -->
+
+  <div id="sticky-banner" class="fixed top-20 flex justify-center w-full">
+
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    
+      <div id="alert-1" class="flex items-center p-4 mb-4 text-white-800 rounded-lg bg-black-100 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        <div class="ms-3 text-sm font-medium">
+          {{ message }}
+        </div>
+          <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
             </svg>
         </button>
-        <!-- Logout Button in top right corner -->
-        <form action="{% url 'logout' %}" method="POST" class="absolute top-4 right-4">
-          {% csrf_token %}
-          <button type="submit" class="py-2 px-3 text-white bg-blue-700 rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-500">
-              Logout
-          </button>
-        </form>
-        
-    </div>
-</nav>
-
-
-<div id="sticky-banner" class="fixed top-20 flex justify-center w-full">
-
-  {% for message in messages %}
-  {% if message.tags == 'success' %}
-    <div class="mt-5 flex items-center justify-between p-5 leading-normal text-green-600 bg-green-100 rounded-lg" role="alert">
-      <p>{{ message }}</p>
-    
-      <svg onclick="return this.parentNode.remove();" class="inline w-4 h-4 fill-current ml-2 hover:opacity-80 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <path d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM256 464c-114.7 0-208-93.31-208-208S141.3 48 256 48s208 93.31 208 208S370.7 464 256 464zM359.5 133.7c-10.11-8.578-25.28-7.297-33.83 2.828L256 218.8L186.3 136.5C177.8 126.4 162.6 125.1 152.5 133.7C142.4 142.2 141.1 157.4 149.7 167.5L224.6 256l-74.88 88.5c-8.562 10.11-7.297 25.27 2.828 33.83C157 382.1 162.5 384 167.1 384c6.812 0 13.59-2.891 18.34-8.5L256 293.2l69.67 82.34C330.4 381.1 337.2 384 344 384c5.469 0 10.98-1.859 15.48-5.672c10.12-8.562 11.39-23.72 2.828-33.83L287.4 256l74.88-88.5C370.9 157.4 369.6 142.2 359.5 133.7z"/>
-      </svg>
-    </div>
-
-    <!-- <div id="alert-1" class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-      <div class="ms-3 text-sm font-medium">
-        {{ message }}
       </div>
-        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
+  
+    {% elif message.tags == 'error'  %}
+  
+      <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        </svg>
+        <span class="sr-only">Info</span>
+        <div class="ms-3 text-sm font-medium">
+        {{ message }}
+        </div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-2" aria-label="Close">
           <span class="sr-only">Close</span>
           <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
           </svg>
-      </button>
-    </div> -->
-
-  {% elif message.tags == 'error'  %}
-    <div class="mt-5 flex items-center justify-between p-5 leading-normal text-red-600 bg-red-100 rounded-lg" role="alert">
-      <p>{{ message }}</p>
-    
-      <svg onclick="return this.parentNode.remove();" class="inline w-4 h-4 fill-current ml-2 hover:opacity-80 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <path d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM256 464c-114.7 0-208-93.31-208-208S141.3 48 256 48s208 93.31 208 208S370.7 464 256 464zM359.5 133.7c-10.11-8.578-25.28-7.297-33.83 2.828L256 218.8L186.3 136.5C177.8 126.4 162.6 125.1 152.5 133.7C142.4 142.2 141.1 157.4 149.7 167.5L224.6 256l-74.88 88.5c-8.562 10.11-7.297 25.27 2.828 33.83C157 382.1 162.5 384 167.1 384c6.812 0 13.59-2.891 18.34-8.5L256 293.2l69.67 82.34C330.4 381.1 337.2 384 344 384c5.469 0 10.98-1.859 15.48-5.672c10.12-8.562 11.39-23.72 2.828-33.83L287.4 256l74.88-88.5C370.9 157.4 369.6 142.2 359.5 133.7z"/>
-      </svg>
-    </div>
-
-    <!-- <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-      <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-      </svg>
-      <span class="sr-only">Info</span>
-      <div class="ms-3 text-sm font-medium">
-      {{ message }}
+        </button>
       </div>
-      <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-2" aria-label="Close">
-        <span class="sr-only">Close</span>
-        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-        </svg>
-      </button>
-    </div> -->
-
-  {% endif %}
-  {% endfor %}
-
-</div>
-
-<!-- Main Dashboard -->
-<div class="container mx-auto px-6 py-8">
-
-  <!-- User Info & Password Management Section -->
-  <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">User Information</h2>
-    <div class="space-y-2">
-      <p class="text-sm text-gray-600"><strong>Username:</strong> {{user.username}}</p>
-      <p class="text-sm text-gray-600"><strong>Email:</strong> {{user.email}}</p>
-      <div class="flex justify-between items-center">
-        <a href="#" class="text-sm text-blue-600 hover:text-blue-700">Change Password</a>
-      </div>
-    </div>
+  
+    {% endif %}
+    {% endfor %}
+  
   </div>
 
-  <!-- Two Part Page Layout: Left Side & Right Side -->
-  <div class="flex flex-col lg:flex-row lg:space-x-6">
 
-    <!-- Left Side (small) -->
-    <div class="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md space-y-6 mb-6 lg:mb-0">
+  <!-- dashboad code starts  -->
 
-      <!-- Google Drive Status Card -->
-      <div class="space-y-3 p-4 border border-gray-300 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-gray-800">Google Drive Status</h3>
-        {% if storage_percentage is not none %}
-            <div class="text-green-500 font-semibold">Connected</div>
-            <div class="relative pt-1">
-                <!-- <div class="flex mb-2 items-center justify-between">
-                    <span class="text-xs font-semibold inline-block py-1 uppercase">Storage Usage</span>
-                    <span class="text-xs font-semibold inline-block py-1 uppercase">
-                        {{ used_storage_gb }} GB / {{ total_storage_gb }} GB
-                    </span>
-                </div> -->
-                <div class="flex mb-2">
-                    <div class="w-full bg-gray-200 rounded-full">
-                        <div class="bg-green-500 text-xs leading-none py-1 text-center text-white" style="width: {{ storage_percentage }}%;">
-                            {{ storage_percentage }}% Used
+    <div class="overlay fixed inset-0 bg-indigo-900/50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <div class="pt-16 max-w-7xl mx-auto flex py-12">
+
+        <main class="flex-1 p-4">
+            <div class="flex flex-col lg:flex-row gap-4 mb-6">
+                <div class="flex-1 bg-indigo-100 border border-indigo-200 rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl md:text-2xl text-blue-900">
+                        Welcome <br><strong>{{user.name}}</strong>
+                    </h2>
+                    <h2 class="text-xl md:text-xl text-blue-900">
+                        Username : <strong>{{user.username}}</strong>
+                    </h2>
+                    <h2 class="text-xl md:text-xl text-blue-900">
+                        Email : <strong>{{user.email}}</strong>
+                    </h2>
+                    
+                    <!-- <span class="inline-block mt-8 px-8 py-2 rounded-full text-xl font-bold text-white bg-indigo-800">
+                        01:51
+                    </span> -->
+                </div>
+
+                <div class="flex-1 bg-blue-100 border border-blue-200 rounded-xl p-6 animate-fade-in">
+                    {% if storage_percentage is not none %}
+                        <h2 class="text-2xl md:text-xl text-blue-900">
+                            Google Drive Status : <strong class="text-green-500">Connected</strong>
+                        </h2>
+                        <div class="relative">
+                            <!-- <div class="flex mb-2 items-center justify-between">
+                                <span class="text-xs font-semibold inline-block py-1 uppercase">Storage Usage</span>
+                                <span class="text-xs font-semibold inline-block py-1 uppercase">
+                                    {{ used_storage_gb }} GB / {{ total_storage_gb }} GB
+                                </span>
+                            </div> -->
+                            <div class="flex mb-2 mt-5">
+                                <div class="w-full bg-gray-200 rounded-full ">
+                                    <div class="bg-green-500 text-xs leading-none py-1 text-center text-white" style="width: {{ storage_percentage }}%;">
+                                        {{ storage_percentage }}% Used
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-sm text-gray-600">
+                            <span>{{ used_storage_gb }} GB of {{ total_storage_gb }} GB used</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-red-500 font-semibold">Error fetching storage information</div>
+                    {% endif %}
+                    <a href="{% url 'sync_folder' %}" class="inline-block mt-8 px-5 py-0.5 rounded-full text-l font-bold text-white bg-blue-800 hover:bg-blue-900 transition-transform duration-300 hover:scale-105">
+                        Sync Now
+                    </a>
+                    <h3 class="py-1">
+                        Sync to fetch changes from Google Drive
+                    </h3>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 mb-6">
+                <div class="flex-1 bg-indigo-100 border border-indigo-200 rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-bold md:text-xl text-blue-900">
+                        Customize Gallery Page
+                    </h2>
+                    <h3 class="py-2">
+                        Make your gallery more personal by adding your branding, logo, and event name.
+                    </h3>
+                    
+                    <a href="#" class="inline-block mt-8 px-5 py-2 rounded-full text-l font-bold text-white bg-blue-800 hover:bg-blue-900 transition-transform duration-300 hover:scale-105">
+                        Customize Now
+                    </a>
+                </div>
+
+                <div class="flex-1 bg-blue-100 border border-blue-200 rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-4xl md:text-xl text-blue-900">
+                        Create New <strong class="text-green-900">Album/Event</strong>
+                    </h2>
+                    <h3 class="py-2">
+                        Created Folders you can manage from your own Google Drive also
+                    </h3>
+                    <div class="" x-data="{ open: false }">
+                        <!-- Trigger --> <span x-on:click="open = true"> <button type="button" class="inline-block mt-8 px-5 py-2 rounded-full text-l font-bold text-white bg-blue-800 hover:bg-blue-900 transition-transform duration-300 hover:scale-105">
+                          Create Now
+                         </button> </span> <!-- Modal -->
+                        <div x-show="open" role="dialog" aria-modal="true" x-id="['modal-title']" aria-labelledby="modal-title-1" :aria-labelledby="$id('modal-title')" x-on:keydown.escape.prevent.stop="open = false" class="fixed inset-0 z-50 w-screen overflow-y-hidden" style="display: none;">
+                         <!-- Overlay -->
+                         <div x-show="open" x-transition.opacity="" class="fixed inset-0 bg-gray-500 bg-opacity-50" style="display: none;"></div> <!-- Panel -->
+                         <div x-show="open" x-on:click="open = false" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="transform opacity-0 translate-y-full" x-transition:enter-end="transform opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="transform opacity-100 translate-y-0" x-transition:leave-end="transform opacity-0 translate-y-full" class="relative flex min-h-screen items-center justify-center p-4" style="display: none;">
+                          <div x-on:click.stop="" x-trap.noscroll.inert="open" class="relative w-full max-w-sm overflow-y-auto shadow-2xl bg-white ring-1 ring-gray-200 rounded-3xl p-10">
+                           <div class="relative">
+                            <div class="flex flex-col text-center">
+                             <p class="text-lg font-bold text-gray-500 mb-10 lg:text-xl">
+                              Create Folder For your Event
+                             </p>
+                            </div>
+                            <form method="POST" action="{% url 'create_folder' %}">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                  <label for="event_name" class="block text-gray-700">Event Name</label>
+                                  <input type="text" name="event_name" id="event_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter event name" required>
+                                </div>
+                                <div class="mb-4">
+                                  <label for="folder_name" class="block text-gray-700">Folder Name</label>
+                                  <input type="text" name="folder_name" id="folder_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter folder name" required>
+                                </div>
+                                <div class="flex justify-end space-x-4">
+                                    <span x-on:click="open = false"> <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 text-sm">
+                                        Cancel
+                                    </button> </span>
+                                  <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm">
+                                    Create Folder
+                                  </button>
+                                </div>
+                              </form>
+                           </div>
+                          </div>
+                         </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center text-sm text-gray-600">
-                  <span>{{ used_storage_gb }} GB of {{ total_storage_gb }} GB used</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                {% for folder in folders %}
+
+                <div class="bg-white rounded-xl shadow-lg p-6  transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="p-6">
+                        <ul class="space-y-3">
+                            <li>
+                                <!-- Event Name -->
+                                <h2 class="text-xl font-noral text-gray-800 mb-2">Event Name: <br><span class="font-bold text-gray-600">{{ folder.event_name }}</span></h2>
+                            </li>
+
+                            <li>
+                                <!-- Folder Name -->
+                                <p class="text-lg font-normal text-gray-700 mb-4">Folder Name: <br><span class="font-bold text-gray-500">{{ folder.folder_name }}</span></p>
+                            </li>
+                            <li>
+                                <a href="{% url 'redirect_to_folder' folder_id=folder.folder_id %}" target="_blank"><button x-on:click="open = false" class="w-full py-2 px-4 text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Upload</button></a>
+                            </li>
+                            <li>
+                                 <!-- View/Delete Button -->
+                                <a href="{% url 'redirect_to_folder' folder_id=folder.folder_id %}"><button class="w-full py-2 px-4 text-white bg-gray-500 rounded-md shadow hover:bg-gray-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">View/Delete</button></a>
+                            </li>
+
+                            <li>
+                                <!-- Download QR Button -->
+                                <a href=""><button class="w-full py-2 px-4 text-white bg-green-600 rounded-md shadow hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Download QR</button>
+                                </a> 
+                            </li>
+                            
+                            <li>
+                                <!-- View Gallery Button -->
+                                <a href="{% url 'gallery' folder_id=folder.folder_id %}" target="blank"><button class="w-full py-2 px-4 text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">View Gallery</button></a>
+                            </li>
+
+                            <li>
+                                <!-- Copy Link Button -->
+                            <a href=""><button class="w-full py-2 px-4 text-white bg-yellow-500 rounded-md shadow hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Copy Link</button></a>
+                            </li>
+                        </ul>
+                        
+                    </div>
                 </div>
+
+                {% empty %}
+                    <tr>
+                    <td colspan="3">You don't have any folders created yet.</td>
+                    </tr>
+                {% endfor %}
             </div>
-        {% else %}
-            <div class="text-red-500 font-semibold">Error fetching storage information</div>
-        {% endif %}
-      </div>
-    
-
-      <!-- Gallery Page Customization Card -->
-      <div class="space-y-3 p-4 border border-gray-300 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold text-gray-800">Customize Gallery Page</h3>
-        <p class="text-sm text-gray-600">Make your gallery more personal by adding your branding, logo, and event name.</p>
-        <button class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700">
-          Customize Gallery
-        </button>
-      </div>
-
+        </main>
     </div>
 
-    <!-- Right Side (larger) -->
-    <div class="w-full lg:w-3/4">
+  <!-- dashboad code end -->
+  
 
-      <!-- Create New Album/Event Section -->
-      <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Album/Event</h3>
-        <div class="flex flex-col lg:flex-row lg:space-x-4">
-          <!-- Button to Trigger Popup Form -->
-          <button 
-            id="createAlbumBtn" 
-            class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mt-4 lg:mt-0 text-center text-sm">
-            Create Album
-          </button>
-          <a href="{% url 'sync_folder' %}">
-            <button 
-            id="createAlbumBtn" 
-            class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mt-4 lg:mt-0 text-center text-sm">
-            Sync Now
-          </button>
-          </a>
-        </div>
-      </div>
+<!-- footer start -->
 
-      <!-- Search Bar for Albums -->
-      <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Search for Albums/Events</h3>
-        <form action="/search" method="POST">
-          <div class="flex items-center">
-            <input type="text" name="search-query" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Search for an Album/Event">
-            <button type="submit" class="bg-blue-600 text-white py-2 px-4 ml-4 rounded-lg hover:bg-blue-700 text-sm">
-              Search
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- All Events Cards Section -->
-      {% for folder in folders %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <div class="space-y-2">
-            <div class="flex items-center space-x-2">
-              <span class="text-sm font-semibold text-gray-800">Event: {{ folder.event_name }}</span>
-              <button class="text-gray-500 hover:text-gray-700 p-1 rounded-full">
-                <span class="material-icons text-xs">edit</span>
-              </button>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span class="text-xs text-gray-500">Folder: {{ folder.folder_name }}</span>
-              <button class="text-gray-500 hover:text-gray-700 p-1 rounded-full">
-                <span class="material-icons text-xs">edit</span>
-              </button>
-            </div>
-          </div>
-          <div class="mt-6 space-y-2">
-            <a target="_blank" href="{% url 'redirect_to_folder' folder_id=folder.folder_id %}">
-              <button class="w-full bg-indigo-600 text-white py-1 px-3 rounded-lg hover:bg-indigo-700 text-sm transition duration-200">
-                Upload
-              </button>
-            </a>
-          <div class="mt-6 space-y-2">
-            <a target="_blank" href="{% url 'redirect_to_folder' folder_id=folder.folder_id %}">
-              <button class="w-full bg-green-600 text-white py-1 px-3 rounded-lg hover:bg-green-700 text-sm transition duration-200">
-                View/Delete
-              </button>
-            </a>
-            <button class="w-full bg-indigo-600 text-white py-1 px-3 rounded-lg hover:bg-indigo-700 text-sm transition duration-200">Download QR</button>
-            <a target="_blank" href="{% url 'gallery' folder_id=folder.folder_id %}">
-              <button class="w-full bg-gray-600 text-white py-1 px-3 rounded-lg hover:bg-gray-700 text-sm transition duration-200">
-                View Gallary
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-      {% empty %}
-        <tr>
-          <td colspan="3">You don't have any folders created yet.</td>
-        </tr>
-      {% endfor %}
-
+<footer class="mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8">
+  <div class="border-t border-slate-900/5 py-10 text-center">
+    <a href="{% url 'home' %}" class="flex items-center justify-center mx-auto">
+      <img src="https://www.svgrepo.com/show/508316/share.svg" class="h-6 mr-3 sm:h-9" alt="Share Logo">
+      <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+        SHARE<span class="ml-0.5 block font-black text-purple-600 xl:inline">MYSNAPS</span>
+      </span>
+    </a>
+    <p class="mt-5 text-center text-sm leading-6 text-slate-500">© 2024 ShareMySnaps All rights reserved.</p>
+    <div class="mt-8 flex items-center justify-center space-x-4 text-sm font-semibold leading-6 text-slate-700">
+      <a href="">Privacy policy</a>
+      <div class="h-4 w-px bg-slate-500/20"></div>
+      <a href="">Changelog</a>
     </div>
   </div>
-</div>
+</footer>
 
-<!-- Popup Modal Form -->
-<div id="createAlbumModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden justify-center items-center">
-  <div class="bg-white p-6 rounded-lg shadow-md w-96">
-    <h3 class="text-xl font-semibold text-gray-800 mb-4">Create New Album/Event</h3>
+<!-- footer end -->
+
+
+
     
-    <!-- Modal Form -->
-    <form method="POST" action="{% url 'create_folder' %}">
-      {% csrf_token %}
-      <div class="mb-4">
-        <label for="event_name" class="block text-gray-700">Event Name</label>
-        <input type="text" name="event_name" id="event_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter event name" required>
-      </div>
-      <div class="mb-4">
-        <label for="folder_name" class="block text-gray-700">Folder Name</label>
-        <input type="text" name="folder_name" id="folder_name" class="form-input w-full p-2 border border-gray-300 rounded-lg text-sm" placeholder="Enter folder name" required>
-      </div>
-      <div class="flex justify-end space-x-4">
-        <button type="button" id="closeModalBtn" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 text-sm">
-          Cancel
-        </button>
-        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm">
-          Create Folder
-        </button>
-      </div>
-    </form>
-  </div>
+
 </div>
 
-<!-- JavaScript to handle modal -->
-<script>
-  // Get the modal and buttons
-  const createAlbumBtn = document.getElementById('createAlbumBtn');
-  const createAlbumModal = document.getElementById('createAlbumModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-
-  // Open the modal when the "Create Album" button is clicked
-  createAlbumBtn.addEventListener('click', () => {
-    createAlbumModal.classList.remove('hidden');
-  });
-
-  // Close the modal when the "Cancel" button is clicked
-  closeModalBtn.addEventListener('click', () => {
-    createAlbumModal.classList.add('hidden');
-  });
-
-  // Close the modal when clicking outside the modal (on the overlay)
-  createAlbumModal.addEventListener('click', (e) => {
-    if (e.target === createAlbumModal) {
-      createAlbumModal.classList.add('hidden');
-    }
-  });
 
 
-</script>
+<script src="https://unpkg.com/flowbite@1.4.1/dist/flowbite.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 
 </body>
