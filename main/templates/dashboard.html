@@ -205,18 +205,6 @@
             </div>
 
             <div class="flex flex-col lg:flex-row gap-4 mb-6">
-                <div class="flex-1 bg-indigo-100 border border-indigo-200 rounded-xl p-6 animate-fade-in">
-                    <h2 class="text-xl font-bold md:text-xl text-blue-900">
-                        Customize Gallery Page
-                    </h2>
-                    <h3 class="py-2">
-                        Make your gallery more personal by adding your branding, logo, and event name.
-                    </h3>
-                    
-                    <a href="#" class="inline-block mt-8 px-5 py-2 rounded-full text-l font-bold text-white bg-blue-800 hover:bg-blue-900 transition-transform duration-300 hover:scale-105">
-                        Customize Now
-                    </a>
-                </div>
 
                 <div class="flex-1 bg-blue-100 border border-blue-200 rounded-xl p-6 animate-fade-in">
                     <h2 class="text-4xl md:text-xl text-blue-900">
@@ -265,6 +253,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="flex-1 bg-indigo-100 border border-indigo-200 rounded-xl p-6 animate-fade-in">
+                    <h2 class="text-xl font-bold md:text-xl text-blue-900">
+                        Customize Gallery Page
+                    </h2>
+                    <h3 class="py-2">
+                        Make your gallery more personal by adding your Some more info.
+                    </h3>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -305,6 +302,11 @@
                             <li>
                                 <!-- Copy Link Button -->
                             <a href=""><button class="w-full py-2 px-4 text-white bg-yellow-500 rounded-md shadow hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Copy Link</button></a>
+                            </li>
+
+                            <li>
+                                <!-- Customize gallary page Button -->
+                            <a href="{% url 'customize' folder_id=folder.folder_id %}"><button class="w-full py-2 px-4 text-white bg-green-600 rounded-md shadow hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Customize Page</button></a>
                             </li>
                         </ul>
                         

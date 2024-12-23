@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="flex items-center justify-center">
+    <!-- Author: FormBold Team -->
+    <div class="mx-auto w-full max-w-[550px] bg-white">
+        <form method="POST" enctype="multipart/form-data" class="py-4 px-9">
+            {% csrf_token %}
+            <div class="mb-5">
+                <label for="title" class="mb-3 block text-base font-medium text-[#07074D]">
+                    Folder Title:
+                </label>
+                <input type="text" name="title" id="title" value="{{ folder.title }}" placeholder="Enter folder title"
+                    class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+            </div>
+
+            <div class="mb-6 pt-4">
+                <label class="mb-5 block text-xl font-semibold text-[#07074D]">
+                    Upload Landscape Background Image
+                </label>
+
+                <div class="mb-8">
+                    <input type="file" name="background_image" id="background_image" class="sr-only" />
+                    <label for="background_image"
+                        class="relative flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-12 text-center">
+                        <div>
+                            <span class="mb-2 block text-xl font-semibold text-[#07074D]">
+                                Drop files here
+                            </span>
+                            <span class="mb-2 block text-base font-medium text-[#6B7280]">
+                                Or
+                            </span>
+                            <span
+                                class="inline-flex rounded border border-[#e0e0e0] py-2 px-7 text-base font-medium text-[#07074D]">
+                                Browse
+                            </span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Display current image if any -->
+                 <p>Current Image</p>
+                {% if folder.background_image %}
+                <div class="mb-5 rounded-md bg-[#F5F7FB] py-4 px-8">
+                    <div class="flex items-center justify-between">
+                        <img src="{{folder.background_image.url}}" alt="">
+                    </div>
+                </div>
+                {% else %}
+                <div class="mb-5 text-[#6B7280]">
+                    <span>No background image uploaded</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -4,9 +4,17 @@ from .models import GoogleDriveFolder
 from social_django.models import UserSocialAuth
 import requests
 from social_django.utils import load_strategy
-from django.contrib import messages
 import os
 from dotenv import load_dotenv
+import json
+from django.contrib import messages
+from django.core.files.storage import default_storage
+from urllib.parse import quote_plus
+from django.http import HttpResponse
+import mimetypes
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+from .forms import GoogleDriveFolderForm
+
 # Load environment variables from .env file
 load_dotenv()
  
@@ -140,9 +148,6 @@ def create_folder(request):
 
 
 
-from django.contrib import messages
-
-
 @login_required
 def sync_folders(request):
     sync_success = False
@@ -188,21 +193,6 @@ def sync_folders(request):
 
     return redirect('dashboard')
 
-
-import json
-import requests
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.core.files.storage import default_storage
-
-
-import json
-import requests
-from django.contrib import messages
-from django.shortcuts import redirect, render
-from django.core.files.storage import default_storage
-from requests_toolbelt.multipart.encoder import MultipartEncoder
-from io import BytesIO
 
 @login_required
 def upload_image_to_folder(request, folder_id):
@@ -357,10 +347,6 @@ def redirect_to_folder(request, folder_id):
     return redirect(drive_folder_url)
 
 
-import requests
-from django.shortcuts import render
-from django.http import HttpResponse
-
 # Add your Google API key here
 
 # def gallery(request, folder_id):
@@ -397,8 +383,6 @@ from django.http import HttpResponse
 
 # f"https://drive.google.com/uc?export=view&id={image_ids}"
 
-import requests
-from urllib.parse import quote_plus
 
 # URL to fetch files from a Google Drive folder (use your own API key here)
 BASE_URL = "https://www.googleapis.com/drive/v3/files"
@@ -427,13 +411,6 @@ def fetch_image_ids_from_folder(folder_id, api_key):
         # print(f"Error: {response.status_code} - {response.text}")
         return []
 
-
-import requests
-from django.http import HttpResponse
-
-import requests
-from django.http import HttpResponse
-import mimetypes
 
 def serve_image(request, image_ids):
     # Build the URL for Google Drive image
@@ -475,13 +452,27 @@ def serve_image(request, image_ids):
 def image_gallery(request, folder_id):
     # Your public API key for Google Drive
     api_key =os.getenv('API_KEY') # Replace with your actual API key
-
+    folder = GoogleDriveFolder.objects.get(folder_id=folder_id)
     # Fetch image IDs from the folder
     image_ids = fetch_image_ids_from_folder(folder_id, api_key)
-    # print(image_ids)
+    print(image_ids)
     # Render the gallery with the list of image URLs
-    return render(request, 'gallary1.html', {'image_ids': image_ids})
+    return render(request, 'gallary.html', {'image_ids': image_ids , 'folder': folder})
 
 
+@login_required
+def customize(request, folder_id):
+    # Use folder_id instead of id
+    folder = GoogleDriveFolder.objects.get(folder_id=folder_id)
+    
+    if request.method == 'POST':
+        form = GoogleDriveFolderForm(request.POST, request.FILES, instance=folder)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = GoogleDriveFolderForm(instance=folder)
+    
+    return render(request, 'customize.html', {'form': form, 'folder': folder})
 
 
