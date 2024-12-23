@@ -1,0 +1,316 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>ShareMySnaps - Gallary</title>
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+		<!-- Bootstrap CSS -->
+		<link rel='stylesheet' id='bootstrap-css'  href="{% static 'glr/css/bootstrap/css/bootstrap.css' %}" type='text/css' media='all' />
+		<!-- Font Awesome Icons CSS -->
+		<link rel='stylesheet' id='font-awesome'  href="{% static 'glr/css/fontawesome/css/all.css' %}" type='text/css' media='all' />
+		<!-- Owl Carousel -->
+		<link rel='stylesheet' id='owl-carousel'  href="{% static 'glr/js/owl-carousel/owl.carousel.css' %}" type='text/css' media='all' />
+		<!-- Main CSS File -->
+		<link rel='stylesheet' id='gleam-style-css'  href="{% static 'glr/style.css' %}" type='text/css' media='all' />
+		<!-- favicons -->
+		<link rel="icon" href="{% static 'glr/images/icons/favicon-32x32.png' %}" sizes="32x32" />
+		<link rel="icon" href="{% static 'glr/images/icons/favicon-192x192.png' %}" sizes="192x192" />
+		<link rel="apple-touch-icon-precomposed" href="{% static 'glr/images/icons/favicon-180x180.png' %}" />
+
+    <style>
+      /* Lightbox container */
+      .lightbox {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.8);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          overflow: hidden;
+      }
+
+      /* Lightbox content (image) */
+      .lightbox-content {
+          max-width: 90%;
+          max-height: 90%;
+          margin: auto;
+          display: block;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      /* Caption */
+      .caption {
+          position: absolute;
+          bottom: 20px;
+          left: 20px;
+          font-size: 18px;
+          color: white;
+          font-weight: bold;
+      }
+
+      /* Close button */
+      .close {
+          position: absolute;
+          top: 20px;
+          right: 40px;
+          font-size: 50px;
+          color: rgb(255, 255, 255);
+          cursor: pointer;
+          z-index: 10000;
+      }
+
+      /* Navigation buttons (Next/Prev) */
+      .prev,
+      .next {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 30px;
+          color: white;
+          background-color: rgba(0, 0, 0, 0.5);
+          border: none;
+          padding: 10px;
+          cursor: pointer;
+          z-index: 10001;
+      }
+
+      .prev {
+          left: 10px;
+      }
+
+      .next {
+          right: 10px;
+      }
+
+      /* Image hover effect */
+      .gallery-post img {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          cursor: pointer; /* Adds pointer cursor */
+      }
+
+      /* Slight zoom effect on hover */
+      .gallery-post img:hover {
+          transform: scale(1.01); /* Slight zoom (less than before) */
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* For mobile responsiveness */
+      @media (max-width: 768px) {
+          .caption {
+              font-size: 16px;
+          }
+
+          .close {
+              font-size: 40px;
+          }
+
+          .prev,
+          .next {
+              font-size: 24px;
+          }
+      }
+    </style>
+
+	</head>
+	<body class="home">
+		<div class="menu-mask"></div>
+		<!-- HEADER -->
+		<header class="main-header header-1">
+			<div class="container">
+				<div class="header-container">
+					<div class="logo logo-1 logo-white"><a href="#"><img class="img-fluid" src="{% static 'glr/images/sharemysnaps_white.png' %}" alt="Gleam"></a></div>
+					<div class="logo logo-1 logo-dark"><a href="#"><img class="img-fluid" src="{% static 'glr/images/sharemysnaps_black.png' %}" alt="Gleam"></a></div>
+					<nav class="nav-holder nav-holder-1">
+						<ul class="menu-nav">
+							<li class="menu-item menu-item-has-children">
+								<a href="#">Home</a>
+							</li>
+							</ul>
+					</nav>
+					<div class="nav-button-holder"> <button type="button" class="nav-button"> <span class="icon-bar"></span> </button></div>
+					
+				</div>
+			</div>
+		</header>
+		<!-- /HEADER -->
+		<!-- PAGE TOP -->
+		<div class="top-single-bkg " style="background-image:url('{{folder.background_image.url}}');">
+			<div class="inner-desc">
+				<div class="container">
+					<h1 class="post-title single-post-title">{{folder.title}}</h1>
+				</div>
+			</div>
+		</div>
+		<!-- /PAGE TOP -->
+		<!-- PAGE CONTENT -->
+		<div class="page-holder custom-page-template page-full fullscreen-page home-page-content clearfix">
+			<!-- SECTION 1-->
+			<section class="section-holder margin-b72 alignc">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-8 offset-lg-2">
+							<h2 class="section-title margin-b32">Memories always memorable</h2>
+						</div>
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container -->
+			</section>
+			<!-- /SECTION 1-->
+			
+			<!-- SECTION 2-->
+			<section class="section-holder">
+				<div class="gallery-container">
+					<div class="container">
+						<div class="row layout-masonry gallery-holder gallery-masonry3cols">
+              {% for image_ids in image_ids %}
+                <div class="col-sm-6 col-lg-4 blog-item-masonry gallery-post">
+                  <img class="img-fluid" src="https://drive.google.com/thumbnail?id={{ image_ids }}&sz=s4000" 
+                       onclick="openLightbox(this)">
+                </div>
+              {% endfor %}
+							<div class="col-sm-6 col-lg-4 blog-item-masonry gallery-post"> <a href="{% static 'glr/images/albums/gal-4/gal-4-01.jpg' %}" class="lightbox" title=""> <img class="img-fluid" src="{% static 'glr/images/albums/gal-4/gal-4-01.jpg' %}" alt=""> </a></div>
+						</div>
+					</div>
+					</div>
+			</section>
+		<!-- /SECTION 2-->
+    <hr class="hr" />
+
+			<!-- SECTION 3-->
+			<section class="section-holder">
+				<div class="container alignc">
+					<div class="row">
+						<div class="col-lg-10 offset-lg-1">
+							<h2 class="section-title margin-b32">Create Your Gallary In 5 Minutes</h2>
+							<a href="{% url 'home' %}" class="read-more">Create Now</a>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /SECTION 3-->
+		</div>
+		<!-- home-page-content -->
+		<!-- FOOTER -->
+		<footer>
+			<div class="container">
+				<div class="copyright">
+					<div class="footer-copy"> Copyright &copy; 2024, ShareMySnaps</div>
+				</div>
+			</div>
+		</footer>
+		<!-- FOOTER -->
+		<div class="scrollup">
+			<a class="scrolltop" href="#">
+			<i class="fa fa-chevron-up"></i>
+			</a>
+		</div>
+
+     <!-- Lightbox Container (initially hidden) -->
+     <div id="lightbox" class="lightbox">
+      <span class="close" onclick="closeLightbox()">×</span>
+      <img class="lightbox-content" id="lightbox-img">
+      <div class="caption" id="lightbox-caption"></div>
+      <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+      <button class="next" onclick="changeImage(1)">&#10095;</button>
+    </div>
+
+		<!-- JS --> 
+		<script src="{% static 'glr/js/jquery.js' %}"></script>
+		<script src="{% static 'glr/js/jquery-migrate.min.js' %}"></script>
+		<script src="{% static 'glr/css/bootstrap/js/popper.js' %}"></script>
+		<script src="{% static 'glr/css/bootstrap/js/bootstrap.js' %}"></script>
+		<script src="{% static 'glr/js/easing.js' %}"></script>
+		<script src="{% static 'glr/js/fitvids.js' %}"></script>
+		<script src="{% static 'glr/js/owl-carousel/owl.carousel.js' %}"></script>
+		<script src="{% static 'glr/js/isotope.js' %}"></script>
+		<script src="{% static 'glr/js/simple-lightbox.js' %}"></script>
+		<!-- MAIN JS -->
+		<script src="{% static 'glr/js/init.js' %}"></script>
+
+    <!-- JavaScript -->
+
+    <script>
+      var currentIndex = 0;
+      var images = [];
+
+      // Collect all images in the gallery
+      var galleryImages = document.querySelectorAll('.gallery-post img');
+      galleryImages.forEach((image, index) => {
+          images.push({
+              src: image.src,
+              alt: image.alt
+          });
+      });
+
+      // Function to open the lightbox and display the clicked image
+      function openLightbox(image) {
+          // Get the image URL
+          var imageSrc = image.src;
+          var imageAlt = image.alt;
+
+          // Find the index of the clicked image in the array
+          currentIndex = images.findIndex(img => img.src === imageSrc);
+
+          // Set the lightbox image source to the clicked image's src
+          document.getElementById('lightbox-img').src = imageSrc;
+          document.getElementById('lightbox-caption').innerText = imageAlt;
+
+          // Show the lightbox
+          document.getElementById('lightbox').style.display = "flex";
+      }
+
+      // Function to close the lightbox
+      function closeLightbox() {
+          document.getElementById('lightbox').style.display = "none";
+      }
+
+      // Function to change the image (next or previous)
+      function changeImage(direction) {
+          currentIndex += direction;
+          if (currentIndex < 0) {
+              currentIndex = images.length - 1;
+          } else if (currentIndex >= images.length) {
+              currentIndex = 0;
+          }
+
+          var newImage = images[currentIndex];
+
+          // Apply a fade-out effect before changing the image
+          var lightboxImage = document.getElementById('lightbox-img');
+          lightboxImage.style.opacity = 0;
+
+          setTimeout(() => {
+              // Change the image source and caption after the fade-out
+              lightboxImage.src = newImage.src;
+              document.getElementById('lightbox-caption').innerText = newImage.alt;
+
+              // Apply a fade-in effect
+              lightboxImage.style.opacity = 1;
+          }, 300); // Timeout duration matches the fade-out duration
+      }
+
+      // Listen for keyboard events to navigate the images
+      window.addEventListener('keydown', function(event) {
+          if (event.key === 'ArrowLeft') {
+              changeImage(-1); // Previous image
+          } else if (event.key === 'ArrowRight') {
+              changeImage(1); // Next image
+          } else if (event.key === 'Escape') {
+              closeLightbox(); // Close the lightbox on ESC key
+          }
+      });
+    </script>
+    
+	</body>
+</html>

@@ -100,7 +100,7 @@ if os.getenv('DEBUG') == 'True':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'sharemysnapsdb',
+            'NAME': 'testsharesnaps',
             'USER': 'postgres',
             'PASSWORD': 'Anuj@123',
             'HOST': 'localhost',
@@ -209,3 +209,11 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 ]
 
 API_KEY = os.getenv('API_KEY')
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    'access_type': 'offline',
+    'approval_prompt':'force'
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = True
