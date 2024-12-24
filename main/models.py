@@ -9,7 +9,7 @@ class GoogleDriveFolder(models.Model):
     event_name = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255, default='Captivating Moments in Every Frame', null=True, blank=True)
-    background_image = models.ImageField(upload_to='uploads/gallaryimage/', default="uploads/gallaryimage/defaultbackground.jpg", null=True, blank=True)
+    background_image = models.ImageField(upload_to='gallaryimage/', default="defaultbackground.jpg", null=True, blank=True)
 
     def __str__(self):
         return self.folder_name
