@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # third party apps
     'social_django',
     'django.contrib.humanize',
+    'django_cleanup.apps.CleanupConfig',
 
 ]
 
@@ -217,3 +218,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
 }
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = True
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
