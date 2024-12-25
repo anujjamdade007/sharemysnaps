@@ -30,3 +30,12 @@ def login(request):
     #     return redirect('dashboard')
     
     return render(request, 'login.html')
+
+
+def privacy(request):
+    
+    return render(request, 'privacy.html')
+
+def terms(request):
+    
+    return render(request, 't&c.html')
