@@ -11,4 +11,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('social_auth/', include('social_django.urls' , namespace='social')),
 
+    path('privacy-policy/', views.privacy, name='privacy'),
+
+    path('terms-condition/', views.terms, name='terms'),
+
 ]
