@@ -1,4 +1,4 @@
-
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +10,16 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.0/html2canvas.min.js" integrity="sha512-krxdDOzC2LvA7q3wsj4EHK5qmRrh2N6cY25ZOlnqKv7T0hWbkFiphM+2pflj0nAGfshUjD9tHZiKDTZA395g1A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
 
     <!-- Additional Meta Tags (Optional) -->
     <meta name="description" content="A simple platform to share and make gallary from your images">
@@ -63,6 +73,121 @@
             animation: slideUp 0.5s ease-out forwards;
         }
     </style>
+
+    <!-- qr code style -->
+    <style>
+        /* Custom Mockup Style */
+        .qr-mockup-container {
+            position: relative;
+            width: 1024px; /* Fixed width for HD */
+            height: 1369px; /* Fixed height */
+            background-size: cover; /* Cover the entire container */
+            background-position: center;
+            border-radius: 20px; /* Slightly rounded corners */
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Logo at top center */
+        .logo {
+            position: absolute;
+            top: 170px; /* Distance from top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust to truly center horizontally */
+            z-index: 10;
+        }
+
+        .logo img {
+            width: 300px;
+            height: auto;
+            max-width: 100%;
+        }
+
+        /* Title text at the top */
+        .heading {
+            font-family: 'Arial', sans-serif;
+            font-size: 50px;
+            font-weight: bold;
+            color: #000000;
+            margin-top: 300px;
+            z-index: 10;
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        /* QR Code container styling */
+        .qr-container {
+            position: relative;
+            display: inline-block;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            z-index: 10;
+        }
+
+        /* QR Code image */
+        .qr-container img {
+            width: 500px; /* QR code size */
+            height: 500px;
+            border-radius: 15px;
+            border: 6px solid #000000; /* Blue border for the QR code */
+        }
+
+        /* Tagline and Domain at the bottom */
+        .bottom-text {
+            position: absolute;
+            bottom: 180px; /* Position at the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            z-index: 5;
+            text-align: center;
+        }
+
+        .tagline, .domain {
+            font-family: 'Arial', sans-serif;
+            font-size: 30px;
+            color: #000000;
+            font-weight: 300;
+        }
+
+        .tagline {
+            font-size: 40px; /* Larger tagline font size */
+        }
+
+        .domain {
+            font-size: 30px;
+            font-weight: 300;
+            color: #007bff;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+        }
+        .background-wrapper {
+            position: relative;  /* This will allow content inside to be positioned properly */
+            z-index: 1;  /* Ensure the background doesn't overlap the other content */
+        }
+        .background-wrapper {
+            position: absolute;  /* Position it absolutely within the container */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;  /* Place it behind everything */
+            width: 100%;
+            height: 100%;
+        }
+
+        #background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure the background covers the container */
+        }
+
+
+    </style>
+
 </head>
 <body class="bg-indigo-50 min-h-screen overflow-x-hidden">
 
@@ -288,20 +413,48 @@
                                 <a href="{% url 'redirect_to_folder' folder_id=folder.folder_id %}"><button class="w-full py-2 px-4 text-white bg-gray-500 rounded-md shadow hover:bg-gray-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">View/Delete</button></a>
                             </li>
 
+                            <!-- Download QR Button -->
                             <li>
-                                <!-- Download QR Button -->
-                                <a href=""><button class="w-full py-2 px-4 text-white bg-green-600 rounded-md shadow hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Download QR</button>
-                                </a> 
+                                <a href="javascript:void(0);" id="download-qr-button">
+                                    <button class="w-full py-2 px-4 text-white bg-green-600 rounded-md shadow hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Download QR</button>
+                                </a>
+                            </li>
+
+                            <!-- QR mockup container (visible) which contains QR code and other elements -->
+                            <div id="qr-mockup-container" class="qr-mockup-container" style="display: none;"> <!-- Hidden by default -->
+                                <div class="background-wrapper">
+                                    <img src="{% static 'glr/images/background_qr.jpg' %}" alt="Background" id="background-image">
+                                </div>
+                                <div class="logo">
+                                    <img src="{% static 'glr/images/sharemysnaps_black.png' %}" alt="Logo" id="logo-image">
+                                </div>
+                                <div class="heading">Scan to View My Gallery</div>
+                                <div class="qr-container">
+                                    <img src="" id="qr-image" alt="QR Code">
+                                </div>
+                                <div class="bottom-text">
+                                    <div class="tagline">Make your digital album in 1 click</div>
+                                    <div class="domain">www.sharemysnaps.anujjamdade.site</div>
+                                </div>
+                            </div>
+
+
+                            <!-- View Gallery Button -->
+                            <li>
+                                <a id="view-gallery-link" href="{% url 'gallery' folder_id=folder.folder_id %}" target="_blank">
+                                    <button class="w-full py-2 px-4 text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">
+                                        View Gallery
+                                    </button>
+                                </a>
                             </li>
                             
                             <li>
-                                <!-- View Gallery Button -->
-                                <a href="{% url 'gallery' folder_id=folder.folder_id %}" target="blank"><button class="w-full py-2 px-4 text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">View Gallery</button></a>
-                            </li>
-
-                            <li>
                                 <!-- Copy Link Button -->
-                            <a href=""><button class="w-full py-2 px-4 text-white bg-yellow-500 rounded-md shadow hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">Copy Link</button></a>
+                                <a href="javascript:void(0)" id="copy-link">
+                                    <button id="copy-button" class="w-full py-2 px-4 text-white bg-yellow-500 rounded-md shadow hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none">
+                                        Copy Link
+                                    </button>
+                                </a>
                             </li>
 
                             <li>
@@ -358,6 +511,129 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<script>
+    document.getElementById('copy-link').addEventListener('click', function() {
+        // Get the URL from the "View Gallery" button's anchor tag
+        var link = document.getElementById('view-gallery-link').href;
+        
+        // Use the Clipboard API to copy the link
+        navigator.clipboard.writeText(link).then(function() {
+            var copyButton = document.getElementById('copy-button');
+            
+            // Change button text to "Copied"
+            copyButton.textContent = 'Copied';
+            copyButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            copyButton.classList.add('bg-green-500', 'hover:bg-green-600');  // Change color to green
+
+            // Revert the button text and color back to original after 2 seconds
+            setTimeout(function() {
+                copyButton.textContent = 'Copy Link';
+                copyButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                copyButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');  // Revert color
+            }, 2000);
+        }).catch(function(err) {
+            console.error('Error copying link: ', err);
+        });
+    });
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.0/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const downloadButton = document.getElementById('download-qr-button');
+        const qrImage = document.getElementById('qr-image');
+        const logoImage = document.getElementById('logo-image');
+        const qrMockupContainer = document.getElementById('qr-mockup-container');
+        const viewGalleryButton = document.getElementById('view-gallery-link');
+        
+        const galleryUrl = viewGalleryButton.href;
+
+        // When the user clicks on the "Download QR" button
+        downloadButton.addEventListener('click', function () {
+            // Make the container visible for the image generation
+            qrMockupContainer.style.display = 'block';
+
+            // Generate the QR code as a Data URL
+            QRCode.toDataURL(galleryUrl, {
+                width: 300, // QR code size for HD
+                height: 300,
+                color: {
+                    dark: '#000000',  // QR code color
+                    light: '#ffffff'  // Background color for QR code
+                },
+                correctLevel: 'L' // Correct level as a string ('L', 'M', 'Q', 'H')
+            }, function (error, qrDataUrl) {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+
+                // Set the QR code image source to the generated Data URL
+                qrImage.src = qrDataUrl;
+
+                // Ensure both the logo and QR code images are loaded before proceeding
+                const logoLoaded = new Promise((resolve, reject) => {
+                    if (logoImage) {
+                        logoImage.onload = resolve;
+                        if (logoImage.complete) {
+                            resolve(); // If the image is already loaded
+                        }
+                    } else {
+                        reject('Logo image not found');
+                    }
+                });
+
+                const qrLoaded = new Promise((resolve, reject) => {
+                    if (qrImage) {
+                        qrImage.onload = resolve;
+                        if (qrImage.complete) {
+                            resolve(); // If the image is already loaded
+                        }
+                    } else {
+                        reject('QR code image not found');
+                    }
+                });
+
+                // Wait until both the logo and QR code images are loaded
+                Promise.all([logoLoaded, qrLoaded]).then(() => {
+                    // Now capture the mockup container as an image
+                    html2canvas(qrMockupContainer, {
+                        allowTaint: true,
+                        useCORS: true,
+                        logging: true,
+                        onrendered: function (canvas) {
+                            // Create an image from the canvas (use JPG format)
+                            const imageUrl = canvas.toDataURL("image/jpeg", 0.9); // 0.9 specifies 90% quality
+
+                            // Create a temporary link to trigger the download
+                            const link = document.createElement('a');
+                            link.href = imageUrl;
+                            link.download = 'qr-mockup.jpg'; // Specify the name of the file to be downloaded
+                            link.click(); // Trigger the download
+
+                            // After the download, hide the container again
+                            qrMockupContainer.style.display = 'none';
+                        }
+                    });
+                }).catch(function (error) {
+                    console.error('Error loading images:', error);
+                    // Hide the container again in case of error
+                    qrMockupContainer.style.display = 'none';
+                });
+            });
+        });
+    });
+</script>
+
+
+
+
+
 
 
 </body>

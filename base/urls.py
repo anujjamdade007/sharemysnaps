@@ -1,6 +1,8 @@
 from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path('', views.index , name="home"),
@@ -14,5 +16,7 @@ urlpatterns = [
     path('privacy-policy/', views.privacy, name='privacy'),
 
     path('terms-condition/', views.terms, name='terms'),
+
+    path('favicon.ico', RedirectView.as_view(url='/staticfiles/favicon.ico'))
 
 ]
