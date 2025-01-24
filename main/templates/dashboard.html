@@ -533,7 +533,7 @@
                 copyButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');  // Revert color
             }, 2000);
         }).catch(function(err) {
-            console.error('Error copying link: ', err);
+            // console.error('Error copying link: ', err);
         });
     });
 </script>
@@ -569,7 +569,7 @@
                 correctLevel: 'L' // Correct level as a string ('L', 'M', 'Q', 'H')
             }, function (error, qrDataUrl) {
                 if (error) {
-                    console.error(error);
+                    // console.error(error);
                     return;
                 }
 
@@ -621,7 +621,7 @@
                         }
                     });
                 }).catch(function (error) {
-                    console.error('Error loading images:', error);
+                    // console.error('Error loading images:', error);
                     // Hide the container again in case of error
                     qrMockupContainer.style.display = 'none';
                 });
