@@ -1,18 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import GoogleDriveFolder
-from social_django.models import UserSocialAuth
 import requests
 from social_django.utils import load_strategy
 import os
 from dotenv import load_dotenv
-import json
 from django.contrib import messages
-from django.core.files.storage import default_storage
 from urllib.parse import quote_plus
 from django.http import HttpResponse
 import mimetypes
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 from .forms import GoogleDriveFolderForm
 
 # Load environment variables from .env file
@@ -24,7 +20,7 @@ def dashboard(request):
     try:
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
-    except Exception as e:
+    except Exception:
         messages.error(request, "Session Time Out. Please Login Again.")
         return redirect('login')
 
@@ -50,7 +46,10 @@ def dashboard(request):
 
     else:
         storage_percentage = None
-        messages.error(request, "Failed to retrieve Google Drive storage information.")
+        messages.error(request, "Failed to retrieve Google Drive storage information. Consider review the permisions")
+        # At this point we didnt got the permission to access Gdrive data, so user probaly
+        # forget to given the permission
+        return redirect('login')
 
     folders = GoogleDriveFolder.objects.filter(user=request.user)
 
@@ -70,8 +69,8 @@ def create_folder(request):
     try:
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
-    except Exception as e:
-        messages.error(request, f"Session Time Out. Please Login Again.")
+    except Exception:
+        messages.error(request, "Session Time Out. Please Login Again.")
         return redirect('login')
 
     if not access_token:
@@ -149,8 +148,8 @@ def sync_folders(request):
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
         # print("access token: ", access_token)
-    except Exception as e:
-        messages.error(request, f"Session Time Out Please Login Again")
+    except Exception:
+        messages.error(request, "Session Time Out Please Login Again")
         return redirect('login')
 
     if not access_token:
@@ -194,7 +193,7 @@ def redirect_to_folder(request, folder_id):
         # Retrieve the user's Google OAuth2 social authentication info
         social_user = request.user.social_auth.get(provider='google-oauth2')
         access_token = social_user.get_access_token(load_strategy())
-    except Exception as e:
+    except Exception:
         messages.error(request, "Session timed out. Please log in again.")
         return redirect('login')
 
