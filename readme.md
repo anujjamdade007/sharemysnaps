@@ -32,8 +32,14 @@ A web application that allows users to create personalized photo galleries with 
 ### :camera: Screenshots
 
 <div align="center"> 
+  
   <img src="static/glr/images/11.png" alt="screenshot" />
+  <img alt="dashboard" src="https://github.com/user-attachments/assets/d030857e-0724-4ace-af8b-2997b27e43f0" />
+  <img alt="home page" src="https://github.com/user-attachments/assets/ed157a80-f39c-4c20-b71c-e12178c590f3" />
+
 </div>
+  
+
 
 ## 🚀 **Features**
 
