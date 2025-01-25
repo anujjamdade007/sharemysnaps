@@ -40,18 +40,15 @@
                 </div>
 
                 <!-- Display current image if any -->
-                 <p>Current Image</p>
-                {% if folder.background_image %}
+                <p class="mb-5 block text-lg font-semibold text-[#07074D]">Image preview</p>
                 <div class="mb-5 rounded-md bg-[#F5F7FB] py-4 px-8">
-                    <div class="flex items-center justify-between">
-                        <img src="{{folder.background_image.url}}" alt="">
-                    </div>
-                </div>
-                {% else %}
-                <div class="mb-5 text-[#6B7280]">
+                    {% if folder.background_image %}
+                    <img src="{{folder.background_image.url}}" alt="" id="imagePreview">
+                    {% else %}
                     <span>No background image uploaded</span>
+                    {% endif %}
                 </div>
-                {% endif %}
+                
             </div>
 
             <div>
@@ -63,5 +60,6 @@
         </form>
     </div>
 </div>
-
+{% load static %}
+<script src="{% static 'glr/js/image_preview.js' %}"></script>
 {% endblock %}
