@@ -4,20 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('main', '0001_initial'),
+        ("main", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='googledrivefolder',
-            name='background_image',
-            field=models.ImageField(blank=True, default='images/defaultbackground.jpg', null=True, upload_to='gallaryimage/'),
+            model_name="googledrivefolder",
+            name="background_image",
+            field=models.ImageField(
+                blank=True,
+                default="images/defaultbackground.jpg",
+                null=True,
+                upload_to="gallaryimage/",
+            ),
         ),
         migrations.AddField(
-            model_name='googledrivefolder',
-            name='title',
-            field=models.CharField(blank=True, default='Captivating Moments in Every Frame', max_length=255, null=True),
+            model_name="googledrivefolder",
+            name="title",
+            field=models.CharField(
+                blank=True,
+                default="Captivating Moments in Every Frame",
+                max_length=255,
+                null=True,
+            ),
         ),
     ]
